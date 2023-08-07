@@ -18,7 +18,9 @@ class TodoResource extends Resource
 {
     protected static ?string $model = Todo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Manage Todos';
+
+    protected static ?string $navigationIcon = 'heroicon-o-lightning-bolt';
 
     public static function getEloquentQuery(): Builder
     {
@@ -60,6 +62,8 @@ class TodoResource extends Resource
                         Forms\Components\DateTimePicker::make('due_at')
                             ->placeholder('Due Date'),
 
+                        Forms\Components\Checkbox::make('status'),
+
                     ]),
 
             ]);
@@ -70,13 +74,43 @@ class TodoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->searchable()
                     ->sortable(),
+
+                Tables\Columns\BadgeColumn::make('priority')
+                    ->sortable()
+                    ->enum(Todo::getPriority())
+                    ->colors([
+                        'danger',
+                        'primary' => 2,
+                        'info' => 3,
+                        'secondary' => 4,
+                    ]),
+
+                Tables\Columns\BadgeColumn::make('status')
+                    ->sortable()
+                    ->enum([
+                        0 => 'Pending',
+                        1 => 'Completed',
+                    ])
+                    ->colors([
+                        'primary',
+                        'success' => true,
+                    ]),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime('dS F, Y h:i A'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('priority')
+                    ->options(Todo::getPriority())
+                    ->searchable(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
