@@ -18,13 +18,25 @@ class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+
+    protected static ?string $navigationGroup = 'Manage Property';
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->whereBelongsTo(auth()->user())
             ->latest();
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return "{$record->lead_number} - {$record->full_name}";
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['lead_number', 'full_name', 'phone_number', 'email'];
     }
 
     public static function form(Form $form): Form
@@ -105,6 +117,9 @@ class LeadResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('lead_number')
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('full_name')
                     ->description(fn (Model $record) => $record->email)
                     ->searchable()
