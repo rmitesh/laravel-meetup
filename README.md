@@ -1,66 +1,114 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Meetup Demo Snippets
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Add this in AppServiceProvider.php
+```php
+Illuminate\Support\Facades\URL;
 
-## About Laravel
+URL::forceScheme('https');
+```
+----------------------
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+#### DEMO-1
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Contains
+1. Simple CRUD
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Branch: `demo-1` and `demo-2`
 
-## Learning Laravel
+Todo
+- Table Migration
+```php
+Schema::create('todos', function (Blueprint $table) {
+    $table->id();
+    $table->string('title', 100);
+    $table->string('slug', 100);
+    $table->text('description');
+    $table->boolean('status')->default(false)->comment('0 - Pending, 1 - Completed');
+    $table->tinyInteger('priority')->comment('0 - Very High, 1 - High, 2 - Medium, 3 - Low, 4 - Very Low');
+    $table->timestamp('due_at')->nullable();
+    $table->integer('created_by')->unsigned();
+    $table->timestamps();
+});
+```
+- fillable
+```php
+protected $fillable = [
+    'title', 'slug', 'description', 'status', 'priority', 'due_at', 'created_by',
+];
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+protected $casts = [
+    'due_at' => 'timestamp',
+    'status' => 'bool',
+];
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+----------------------
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+#### DEMO-2
 
-## Laravel Sponsors
+Branch: `demo-3` and `demo-4`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Contains
+1. Global Search
+2. Table Filters
+3. Relationship manager > BelongsToMany
+4. Display only user's leads when they login.
 
-### Premium Partners
+Property Schema
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+```php
+Schema::create('properties', function (Blueprint $table) {
+    $table->id();
+    $table->string('name', 90);
+    $table->string('location', 90);
+    $table->decimal('price', 10, 2);
+    $table->integer('bedrooms')->unsigned();
+    $table->integer('bathrooms')->unsigned();
+    $table->text('description');
+    $table->timestamps();
+});
+```
 
-## Contributing
+- fillable
+```php
+protected $fillable = [
+    'name', 'location', 'price', 'bedrooms', 'bathrooms', 'description',
+];
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Lead Schema
 
-## Code of Conduct
+```php
+Schema::create('leads', function (Blueprint $table) {
+    $table->id();
+    $table->integer('user_id')->unsigned();
+    $table->string('lead_number', 30);
+    $table->string('full_name', 60);
+    $table->string('email', 80)->nullable();
+    $table->string('phone_number', 15);
+    $table->integer('property_type')->unsigned();
+    $table->string('location', 90);
+    $table->decimal('budget', 10, 2);
+    $table->integer('bedrooms')->unsigned();
+    $table->integer('bathrooms')->unsigned();
+    $table->text('additional_requirements')->nullable();
+    $table->timestamps();
+});
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Schema::create('lead_property', function (Blueprint $table) {
+    $table->unsignedBigInteger('lead_id');
+    $table->unsignedBigInteger('property_id');
 
-## Security Vulnerabilities
+    $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
+    $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
+});
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- fillable
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```php
+protected $fillable = [
+    'user_id', 'full_name', 'email', 'phone_number', 'property_type', 'location', 'budget', 'bedrooms', 'bathrooms',
+    'additional_requirements',
+];
+```
