@@ -20,16 +20,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'Mitesh Rathod',
             'email' => 'miteshr32@gmail.com',
         ]);
-
-        for ($i = 0; $i < 5; ++$i) {
-            $user = User::factory()->create();
-            Lead::factory()
-                ->count(rand(1, 10))
-                ->for($user)
-                ->hasAttached(
-                    Property::factory()->count(rand(1, 5))
-                )
-                ->create();
-        }
+        
+        User::factory()
+            ->count(5)
+            ->has(
+                Lead::factory()
+                    ->count(10)
+                    ->hasAttached(
+                        Property::factory()->count(5)
+                    )
+            )
+            ->create();
     }
 }

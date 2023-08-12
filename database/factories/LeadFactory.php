@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 
@@ -19,6 +20,7 @@ class LeadFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::all('id')->random()->id,
             'lead_number' => 'PROP' . fake()->randomNumber(5, true),
             'full_name' => fake()->name(),
             'email' => fake()->safeEmail(),

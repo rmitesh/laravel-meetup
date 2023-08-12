@@ -39,78 +39,83 @@ class LeadResource extends Resource
         return ['lead_number', 'full_name', 'phone_number', 'email'];
     }
 
+    public static function getForm(): array
+    {
+        return [
+            Forms\Components\Card::make([
+                Forms\Components\TextInput::make('full_name')
+                    ->placeholder('Full Name')
+                    ->required(),
+
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->placeholder('Email'),
+
+                Forms\Components\TextInput::make('phone_number')
+                    ->tel()
+                    ->placeholder('Phone Number')
+                    ->required(),
+
+                Forms\Components\Select::make('property_type')
+                    ->placeholder('Property Type')
+                    ->options(Lead::getPropertyType())
+                    ->searchable()
+                    ->required(),
+
+                Forms\Components\TextInput::make('location')
+                    ->placeholder('Location')
+                    ->required(),
+
+                Forms\Components\TextInput::make('budget')
+                    ->numeric()
+                    ->prefix('USD')
+                    ->placeholder('Budget')
+                    ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
+                        ->numeric()
+                        ->decimalPlaces(2) // Set the number of digits after the decimal point.
+                        ->decimalSeparator('.') // Add a separator for decimal numbers.
+                        ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
+                        ->minValue(100) // Set the minimum value that the number can be.
+                        ->maxValue(99999) // Set the maximum value that the number can be.
+                        ->normalizeZeros() // Append or remove zeros at the end of the number.
+                        ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
+                        ->thousandsSeparator(','), // Add a separator for thousands.
+                    )
+                    ->required(),
+
+                Forms\Components\TextInput::make('bedrooms')
+                    ->numeric()
+                    ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
+                        ->numeric()
+                        ->minValue(1) // Set the minimum value that the number can be.
+                        ->maxValue(6)
+                    )
+                    ->placeholder('Total bedrooms')
+                    ->required(),
+
+                Forms\Components\TextInput::make('bathrooms')
+                    ->numeric()
+                    ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
+                        ->numeric()
+                        ->minValue(1) // Set the minimum value that the number can be.
+                        ->maxValue(6)
+                    )
+                    ->placeholder('Total bathrooms')
+                    ->required(),
+
+                Forms\Components\Textarea::make('additional_requirements')
+                    ->rows(2)
+                    ->columnSpan('full')
+                    ->placeholder('Additional requirements'),
+            ])
+            ->columns(),
+        ];
+    }
+
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\Card::make([
-                    Forms\Components\TextInput::make('full_name')
-                        ->placeholder('Full Name')
-                        ->required(),
-
-                    Forms\Components\TextInput::make('email')
-                        ->email()
-                        ->placeholder('Email'),
-
-                    Forms\Components\TextInput::make('phone_number')
-                        ->tel()
-                        ->placeholder('Phone Number')
-                        ->required(),
-
-                    Forms\Components\Select::make('property_type')
-                        ->placeholder('Property Type')
-                        ->options(Lead::getPropertyType())
-                        ->searchable()
-                        ->required(),
-
-                    Forms\Components\TextInput::make('location')
-                        ->placeholder('Location')
-                        ->required(),
-
-                    Forms\Components\TextInput::make('budget')
-                        ->numeric()
-                        ->prefix('USD')
-                        ->placeholder('Budget')
-                        ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
-                            ->numeric()
-                            ->decimalPlaces(2) // Set the number of digits after the decimal point.
-                            ->decimalSeparator('.') // Add a separator for decimal numbers.
-                            ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
-                            ->minValue(100) // Set the minimum value that the number can be.
-                            ->maxValue(99999) // Set the maximum value that the number can be.
-                            ->normalizeZeros() // Append or remove zeros at the end of the number.
-                            ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
-                            ->thousandsSeparator(','), // Add a separator for thousands.
-                        )
-                        ->required(),
-
-                    Forms\Components\TextInput::make('bedrooms')
-                        ->numeric()
-                        ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
-                            ->numeric()
-                            ->minValue(1) // Set the minimum value that the number can be.
-                            ->maxValue(6)
-                        )
-                        ->placeholder('Total bedrooms')
-                        ->required(),
-
-                    Forms\Components\TextInput::make('bathrooms')
-                        ->numeric()
-                        ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask
-                            ->numeric()
-                            ->minValue(1) // Set the minimum value that the number can be.
-                            ->maxValue(6)
-                        )
-                        ->placeholder('Total bathrooms')
-                        ->required(),
-
-                    Forms\Components\Textarea::make('additional_requirements')
-                        ->rows(2)
-                        ->columnSpan('full')
-                        ->placeholder('Additional requirements'),
-                ])
-                ->columns(),
-            ]);
+            ->schema(static::getForm());
     }
 
     public static function table(Table $table): Table
