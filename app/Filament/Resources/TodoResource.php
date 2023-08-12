@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\TodoResource\Actions;
 use App\Filament\Resources\TodoResource\Pages;
 use App\Filament\Resources\TodoResource\RelationManagers;
 use App\Models\Todo;
@@ -109,6 +110,8 @@ class TodoResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make(),
+                    Actions\CommentAction::make()
+                        ->successNotificationTitle('Comment has been added.'),
                     Tables\Actions\DeleteAction::make(),
                 ]),
             ])
