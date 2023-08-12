@@ -10,6 +10,8 @@ URL::forceScheme('https');
 
 #### DEMO-1
 
+Run `php artisan migrate:fresh --seed`
+
 Contains
 1. Simple CRUD
 
@@ -45,6 +47,8 @@ protected $casts = [
 ----------------------
 
 #### DEMO-2
+
+Run `php artisan migrate:fresh --seed`
 
 Branch: `demo-3` and `demo-4`
 
