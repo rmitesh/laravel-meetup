@@ -14,6 +14,8 @@ Run `php artisan migrate:fresh --seed`
 
 Contains
 1. Simple CRUD
+2. Custom Page
+3. Custom Action
 
 Branch: `demo-1` and `demo-2`
 
@@ -57,6 +59,7 @@ Contains
 2. Table Filters
 3. Relationship manager > BelongsToMany
 4. Display only user's leads when they login.
+5. Table Widget
 
 Property Schema
 
